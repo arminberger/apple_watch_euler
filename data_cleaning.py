@@ -12,6 +12,7 @@ def clean_data(project_path, data_path):
     # create list to store motion dataframes
     motion_data = []
     for file in os.scandir(motion_data_path):
+        print(file.path)
         # use read_csv with whitespace delimiter
         subject_data = pd.read_csv(file.path, delim_whitespace=True, header=None)
         # get subject name from filename
@@ -19,6 +20,7 @@ def clean_data(project_path, data_path):
         # add subject name as column
         subject_data['subject'] = subject_name
         # rename columns
+        print(subject_data.head())
         subject_data.columns = ['timestamp', 'x', 'y', 'z', 'subject']
         # parse timestamp column as datetime
         subject_data['timestamp'] = pd.to_datetime(subject_data['timestamp'], unit='s')
@@ -26,9 +28,11 @@ def clean_data(project_path, data_path):
         # add to list
         motion_data.append(subject_data)
 
+    print('came here')
     # create list to store labels dataframes
     labels_data = []
     for file in os.scandir(labels_path):
+        print(file.path)
         # get subject name from filename
         subject_data = pd.read_csv(file.path, delim_whitespace=True)
         # get subject name from filename
@@ -56,6 +60,7 @@ def clean_data(project_path, data_path):
     motion_data.sort(key=lambda x: x['subject'].iloc[0])
     labels_data.sort(key=lambda x: x['subject'].iloc[0])
     # Verify lists have same length and that there is 1:1 correspondence between subjects
+    print("got here")
     assert len(motion_data) == len(labels_data)
     for i in range(len(motion_data)):
         assert motion_data[i]['subject'].iloc[0] == labels_data[i]['subject'].iloc[0]

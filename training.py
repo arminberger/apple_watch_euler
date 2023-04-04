@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 import sklearn
 from sklearn.metrics import classification_report
 
-def train_model(project_path, data_path):
+def train_model(project_path, dataset_path):
     repo = 'OxWearables/ssl-wearables'
     harnet30 = torch.hub.load(repo, 'harnet30', class_num=5, pretrained=True)
 
@@ -52,8 +52,8 @@ def train_model(project_path, data_path):
             return data, label
 
 
-    index_path = os.path.join(data_path, 'index_array.csv')
-    data_path = os.path.join(data_path, 'motion_data_downsampled_all.csv')
+    index_path = os.path.join(dataset_path, 'index_array.csv')
+    data_path = os.path.join(dataset_path, 'motion_data_downsampled_all.csv')
 
     dataset = SleepStagesDataset(index_path, data_path, transform=torch.FloatTensor)
     # Split data into train and test
@@ -131,7 +131,8 @@ def train_model(project_path, data_path):
         if t % 20 == 0:
             print('Saving model...')
             filename = "model"+str(t)+".pth"
-            save_path = os.path.join(data_path, filename)
+            save_path = os.path.join(dataset_path, filename)
+            print(save_path)
             torch.save(my_model.state_dict(), save_path)
             # Test per class accuracy of my_model on test set
             with torch.no_grad():
