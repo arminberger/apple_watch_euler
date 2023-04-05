@@ -7,6 +7,7 @@ from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 import sklearn
 from sklearn.metrics import classification_report
+import my_random_split
 
 def train_model(project_path, dataset_path, model_path):
     repo = 'OxWearables/ssl-wearables'
@@ -23,7 +24,7 @@ def train_model(project_path, dataset_path, model_path):
     # Replace classifier by appropriate size one
     my_model = torch.nn.Sequential(*list(harnet30.children())[:-1], torch.nn.Flatten(), classification_head)
     # Freeze ResNet model weights
-    list(my_model.children())[0].requires_grad_(False)
+    list(my_model.children())[0].requires_grad_(True)
     list(my_model.children())[1].requires_grad_(True)
     list(my_model.children())[2].requires_grad_(True)
 
@@ -58,7 +59,7 @@ def train_model(project_path, dataset_path, model_path):
     dataset = SleepStagesDataset(index_path, data_path, transform=torch.FloatTensor)
     # Split data into train and test
     generator = torch.Generator().manual_seed(42)
-    train, test = torch.utils.data.random_split(dataset, [0.8, 0.2], generator=generator)
+    train, test = my_random_split.random_split(dataset, [0.8, 0.2], generator=generator)
     train_dataloader = DataLoader(train, batch_size=64, shuffle=True)
     test_dataloader = DataLoader(test, batch_size=64, shuffle=True)
 
