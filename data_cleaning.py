@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import os
 import scipy
+from scipy import signal
 
 def clean_data(project_path, data_path):
 
@@ -90,7 +91,7 @@ def clean_data(project_path, data_path):
     for i in range(len(motion_data)):
         # downsample labels data using scipy
         motion_data_downsampled.append(motion_data[i][['x', 'y', 'z']].values)
-        motion_data_downsampled[i] = scipy.signal.resample(motion_data_downsampled[i], int(labels_data[i]['timestamp'].max().timestamp() * 30))
+        motion_data_downsampled[i] = signal.resample(motion_data_downsampled[i], int(labels_data[i]['timestamp'].max().timestamp() * 30))
         # ensure length of array is multiple of harnet input size (e.g. 30*30=900)
         nn_input_size = 900
 
