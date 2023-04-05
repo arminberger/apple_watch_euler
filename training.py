@@ -8,9 +8,9 @@ from torch.utils.data import DataLoader
 import sklearn
 from sklearn.metrics import classification_report
 
-def train_model(project_path, dataset_path):
+def train_model(project_path, dataset_path, model_path):
     repo = 'OxWearables/ssl-wearables'
-    harnet30 = torch.hub.load(repo, 'harnet30', class_num=5, pretrained=True)
+    harnet30 = torch.hub.load(model_path, 'harnet30', class_num=5, pretrained=True)
 
     classification_head = torch.nn.Sequential(torch.nn.Linear(1024,1024),
                                               torch.nn.ReLU(),
