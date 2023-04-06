@@ -8,6 +8,7 @@ def get_paths():
         project_root_path = sys.argv[1]
         data_path = sys.argv[2]
         model_path = sys.argv[3]
+        timestamp_model = None if len(sys.argv) < 5 else sys.argv[4]
     except IndexError:
         print('Please provide the path to the project root, data folder and model (in this order)')
         return None, None, None
@@ -24,16 +25,16 @@ def get_paths():
 
     print(project_root_path)
     print(data_path)
-    return project_root_path, data_path, model_path
+    return project_root_path, data_path, model_path, timestamp_model
 
 def main():
-    project_root_path, data_path, model_path = get_paths()
+    project_root_path, data_path, model_path, timestamp_model = get_paths()
     if project_root_path is None or data_path is None:
         return
 
     # Do something with the paths
     data_cleaning.clean_data(project_root_path, data_path)
-    training.train_model(project_root_path, data_path, model_path)
+    training.train_model(project_root_path, data_path, model_path, timestamp_model)
 
 if __name__ == '__main__':
     main()

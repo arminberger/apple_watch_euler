@@ -9,7 +9,7 @@ import sklearn
 from sklearn.metrics import classification_report
 import my_random_split
 
-def train_model(project_path, dataset_path, model_path):
+def train_model(project_path, dataset_path, model_path, timestamp_model=None):
     repo = 'OxWearables/ssl-wearables'
     harnet30 = torch.hub.load(model_path, 'harnet30', class_num=5, pretrained=True, source='local')
 
@@ -68,6 +68,7 @@ def train_model(project_path, dataset_path, model_path):
 
 
     def train_loop(dataloader, model, loss_fn, optimizer):
+        model.train()
         size = len(dataloader.dataset)
         for batch, (X, y) in enumerate(dataloader):
             # Compute prediction and loss
@@ -87,6 +88,7 @@ def train_model(project_path, dataset_path, model_path):
 
 
     def test_loop(dataloader, model, loss_fn):
+        model.eval()
         size = len(dataloader.dataset)
         num_batches = len(dataloader)
         test_loss, correct = 0, 0
@@ -122,6 +124,10 @@ def train_model(project_path, dataset_path, model_path):
     loss_fn = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(my_model.parameters(), lr=learning_rate)
 
+
+    if timestamp_model is not None:
+        print('Loading model...')
+        my_model.load_state_dict(torch.load(timestamp_model))
     my_model.to(device)
 
     epochs = 250
@@ -137,7 +143,7 @@ def train_model(project_path, dataset_path, model_path):
             torch.save(my_model.state_dict(), save_path)
             # Test per class accuracy of my_model on test set
             with torch.no_grad():
-                complete_test_dataloader = DataLoader(test, batch_size=1024, shuffle=True)
+                complete_test_dataloader = DataLoader(test, batch_size=len(test), shuffle=True)
                 i=0
                 for X, y in complete_test_dataloader:
                     X = X.to(device)
@@ -147,7 +153,7 @@ def train_model(project_path, dataset_path, model_path):
                     y = y.type(torch.int).tolist()
                     print(classification_report(y, pred, digits=4))
                     i = i+1
-                    if i>1:
+                    if i>0:
                         break
 
     print("Done!")
