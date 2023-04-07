@@ -130,8 +130,8 @@ def train_model(project_path, dataset_path, model_path, timestamp_model=None):
         my_model.load_state_dict(torch.load(timestamp_model))
     my_model.to(device)
 
-    epochs = 250
-    for t in range(epochs):
+    t = 0
+    while True:
         print(f"Epoch {t + 1}\n-------------------------------")
         train_loop(train_dataloader, my_model, loss_fn, optimizer)
         test_loop(test_dataloader, my_model, loss_fn)
@@ -155,5 +155,5 @@ def train_model(project_path, dataset_path, model_path, timestamp_model=None):
                     i = i+1
                     if i>0:
                         break
-
+        t = t + 1
     print("Done!")
